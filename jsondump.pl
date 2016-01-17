@@ -5,16 +5,19 @@ use Data::Dumper;
 $addaction = sub {
 	my $command = shift;
 	my $json;
+	my $tweet;
 
 	if ($command =~ s#^/jsondump ## && length($command)){
-		if ($command =~ /^[0-9]+$/ && (0+$command > 19)){
-			$json = &jsondump($command);
+		$tweet = &get_tweet($command);
+		if (defined($tweet->{'id_str'})) {
+			$json = &jsondump($tweet->{'id_str'});
 			print $stdout Dumper($json);
+			return 1;
 		}
 		else {
-			print $stdout "Not a valid tweet ID\n";	
+			print $stdout "Not a valid tweet\n";	
+			return 0;
 		}
-		return 1;
 	}
 	return 0;
 };
